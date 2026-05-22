@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  titre       String
+  slug        String    @unique
+  resume      String
+  contenu     String    @db.Text
+  imageUrl    String
+  categorie   String
+  auteur      String    @default("Alassane Ibraima")
+  publie      Boolean   @default(false)
+  vues        Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  commentaires Commentaire[]
+}
+
+model Commentaire {
+  id        String   @id @default(cuid())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId String
+  auteur    String
+  email     String
+  contenu   String   @db.Text
+  approuve  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
